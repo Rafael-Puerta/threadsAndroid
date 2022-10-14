@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         lista.add("hola");
         //paradigma , model - vista- controlador
         ArrayAdapter<String> adaptador=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-
+        ListView lv=findViewById(R.id.listView);
+        lv.setAdapter(adaptador);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -56,7 +58,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         t.append(getDataFromUrl("https://api.myip.com"));
-                        adaptador.notifyDataSetChanged();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                lista.add(getDataFromUrl("https://api.myip.com"));
+                                adaptador.notifyDataSetChanged();
+                            }
+                        })
                     }
                 });
             }
