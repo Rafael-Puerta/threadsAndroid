@@ -3,8 +3,12 @@ package com.example.threads;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +17,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -23,16 +29,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+
+
         Button b = (Button) findViewById(R.id.button);
+        TextView t= findViewById(R.id.texto);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getDataFromUrl("https://api.myip.com/");
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.append(getDataFromUrl("https://api.myip.com"));
+                    }
+                });
             }
-
-
         });
-
     }
     String error = ""; // string field
     private String getDataFromUrl(String demoIdUrl) {
@@ -61,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
+                Log.i("prueba",sb.toString());
                 in.close();
                 result = sb.toString();
             } else {
