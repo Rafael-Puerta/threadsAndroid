@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> lista=new ArrayList<>();
         lista.add("hola");
         //paradigma , model - vista- controlador
-        ArrayAdapter<String> adaptador=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> adaptador=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lista);
         ListView lv=findViewById(R.id.listView);
         lv.setAdapter(adaptador);
 
@@ -57,15 +57,17 @@ public class MainActivity extends AppCompatActivity {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        t.append(getDataFromUrl("https://api.myip.com"));
+                        String textito=getDataFromUrl("https://api.myip.com");
+                        t.setText(textito);
 
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                lista.add(getDataFromUrl("https://api.myip.com"));
+
+                                lista.add(textito);
                                 adaptador.notifyDataSetChanged();
                             }
-                        })
+                        });
                     }
                 });
             }
